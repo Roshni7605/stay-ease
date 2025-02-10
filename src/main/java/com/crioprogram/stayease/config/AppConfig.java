@@ -1,21 +1,55 @@
 package com.crioprogram.stayease.config;
 
+import com.crioprogram.stayease.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class AppConfig {
 
+    private final JWTAuthFilter jwtAuthFilter;
+    private final UserRepository userRepository;
+
+    @Autowired
+    public AppConfig(JWTAuthFilter jwtAuthFilter, UserRepository userRepository) {
+        this.jwtAuthFilter = jwtAuthFilter;
+        this.userRepository = userRepository;
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())  // Allow all requests
-                .csrf(csrf -> csrf.disable());  // Disable CSRF (only for development)
+                .csrf().disable()
+                .authorizeHttpRequests()
+                .requestMatchers("api/v1/users/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "api/v1/hotels/**").permitAll()
+                .requestMatchers(HttpMethod.PUT, "api/v1/hotels/**").hasRole("HOTEL_MANAGER")
+                .requestMatchers(HttpMethod.POST, "api/v1/hotels/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "api/v1/hotels/**").hasRole("ADMIN")
+
+                .requestMatchers("/public/**").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
     }
 
     @Bean

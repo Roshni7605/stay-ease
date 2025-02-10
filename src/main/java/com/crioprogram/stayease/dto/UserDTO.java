@@ -1,5 +1,6 @@
 package com.crioprogram.stayease.dto;
 
+import com.crioprogram.stayease.model.User;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -34,6 +35,13 @@ public class UserDTO {
 
     public UserDTO() {
 
+    }
+
+    public UserDTO(User user){
+        this.firstName = user.getFirstName();
+        this.lastName = user.getLastName();
+        this.emailId = user.getEmailId();
+        this.role = user.getRole();
     }
 
     public String getFirstName() {

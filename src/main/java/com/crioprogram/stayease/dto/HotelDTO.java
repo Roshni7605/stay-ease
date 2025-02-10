@@ -1,42 +1,19 @@
-package com.crioprogram.stayease.model;
+package com.crioprogram.stayease.dto;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.Column;
 
-@Entity
-public class Hotel {
+public class HotelDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Integer hotelId;
-
-    @Column(unique = true, nullable = false)
     private String hotelName;
-    @Column(nullable = false)
     private String location;
     private String description;
     private int availableRooms;
 
-    public Hotel(){
-
-    }
-
-    public Hotel(String hotelName, String location, String description, int availableRooms) {
+    public HotelDTO(String hotelName, String location, String description, int availableRooms) {
         this.hotelName = hotelName;
         this.location = location;
         this.description = description;
         this.availableRooms = availableRooms;
-    }
-
-    public Integer getHotelId() {
-        return hotelId;
-    }
-
-    public void setHotelId(Integer hotelId) {
-        this.hotelId = hotelId;
     }
 
     public String getHotelName() {

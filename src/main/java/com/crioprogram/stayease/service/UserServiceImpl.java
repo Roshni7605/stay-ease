@@ -4,6 +4,7 @@ import com.crioprogram.stayease.dto.ResponseDTO;
 import com.crioprogram.stayease.dto.UserDTO;
 import com.crioprogram.stayease.model.User;
 import com.crioprogram.stayease.repository.UserRepository;
+import com.crioprogram.stayease.utility.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -26,7 +27,8 @@ public class UserServiceImpl implements IUserService {
             User user = new User(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmailId(),
                     encodedPassword, userDTO.getRole());
             User savedUser = userRepository.save(user);
-            return new ResponseDTO(HttpStatus.CREATED, savedUser, "User Registered Successfully.");
+            UserDTO savedUserDTO = new UserDTO(savedUser);
+            return new ResponseDTO(HttpStatus.CREATED, savedUserDTO, "User Registered Successfully.");
         }
         catch (DataIntegrityViolationException e) {
             return new ResponseDTO(HttpStatus.BAD_REQUEST, e.getMostSpecificCause().getMessage(), "Data Validation Error");
@@ -47,7 +49,8 @@ public class UserServiceImpl implements IUserService {
             if (!passwordEncoder.matches(userDTO.getPassword(), userByEmailId.getPassword())){
                 return new ResponseDTO(HttpStatus.BAD_REQUEST, null, "Incorrect Password");
             }
-            return new ResponseDTO(HttpStatus.ACCEPTED, userByEmailId, "User Logged In Successful");
+            String token = new JWTService().getToken(userDTO.getEmailId(), userByEmailId.getRole());
+            return new ResponseDTO(HttpStatus.ACCEPTED, token, "User Logged In Successful");
         }
         catch (Exception exception){
             return new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, exception.getLocalizedMessage(),
