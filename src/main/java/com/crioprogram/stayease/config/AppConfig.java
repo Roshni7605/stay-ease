@@ -31,11 +31,12 @@ public class AppConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("api/v1/users/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "api/v1/hotels/**").permitAll()
-                .requestMatchers(HttpMethod.PUT, "api/v1/hotels/**").hasRole("HOTEL_MANAGER")
-                .requestMatchers(HttpMethod.POST, "api/v1/hotels/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "api/v1/hotels/**").hasRole("ADMIN")
+                .requestMatchers("/api/v1/users/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/hotels/get-hotels").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/hotels/get-hotel/{hotelId}").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/api/v1/hotels/{hotelId}").hasRole("HOTEL_MANAGER")
+                .requestMatchers(HttpMethod.POST, "/api/v1/hotels/add-hotel").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/hotels/{hotelId}").hasRole("ADMIN")
 
                 .requestMatchers("/public/**").permitAll()
                 .anyRequest().authenticated()
