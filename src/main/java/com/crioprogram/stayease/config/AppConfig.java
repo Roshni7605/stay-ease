@@ -37,6 +37,7 @@ public class AppConfig {
                 .requestMatchers(HttpMethod.PUT, "/api/v1/hotels/{hotelId}").hasRole("HOTEL_MANAGER")
                 .requestMatchers(HttpMethod.POST, "/api/v1/hotels/add-hotel").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/hotels/{hotelId}").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/v1/hotel-booking").permitAll()
 
                 .requestMatchers("/public/**").permitAll()
                 .anyRequest().authenticated()

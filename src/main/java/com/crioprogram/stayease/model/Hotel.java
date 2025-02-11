@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 public class Hotel {
 
@@ -20,6 +23,9 @@ public class Hotel {
     private String description;
     private int availableRooms;
 
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RoomBooking> bookings;
+
     public Hotel(){
 
     }
@@ -29,6 +35,7 @@ public class Hotel {
         this.location = location;
         this.description = description;
         this.availableRooms = availableRooms;
+        this.bookings = new ArrayList<>();
     }
 
     public Integer getHotelId() {
@@ -69,5 +76,13 @@ public class Hotel {
 
     public void setAvailableRooms(int availableRooms) {
         this.availableRooms = availableRooms;
+    }
+
+    public List<RoomBooking> getBookings() {
+        return bookings;
+    }
+
+    public void setBookings(RoomBooking roomBooking) {
+        this.bookings.add(roomBooking);
     }
 }
